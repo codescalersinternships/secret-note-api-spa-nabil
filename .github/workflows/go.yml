@@ -20,18 +20,21 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22.4'
-
-    - name: Navigate to backend directory
-      run: cd backend
     
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v3
+      with:
+        args: ./backend
 
     - name: Test
-      run: make test
+      run: |
+        cd backend
+        make test
     
     - name: Run go fmt
-      run: make format
+      run: |
+        cd backend
+        make format
 
 
     - name: Test
