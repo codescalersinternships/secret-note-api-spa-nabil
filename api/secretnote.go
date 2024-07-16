@@ -29,13 +29,13 @@ func (server *Server) CreateNote(ctx *gin.Context) {
 	expireTime, err := time.Parse(layout, req.ExpireDate)
 	if err != nil {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
-		ctx.Writer.Write([]byte("date isn't parsing"))
+		fmt.Fprint(ctx.Writer, "date isn't parsing")
 		return
 	}
 	id, err := uuid.Parse(req.UserID)
 	if err != nil {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
-		ctx.Writer.Write([]byte("uuid isn't parsing"))
+		fmt.Fprint(ctx.Writer, "uuid isn't parsing")
 		return
 	}
 	note := db.Note{
@@ -62,7 +62,7 @@ func (server *Server) GetNote(ctx *gin.Context) {
 	id, err := uuid.Parse(req.ID)
 	if err != nil {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
-		ctx.Writer.Write([]byte("date isn't parsing"))
+		fmt.Fprint(ctx.Writer, "date isn't parsing")
 		return
 	}
 	result := note.FindByID(id, server.store)
@@ -91,7 +91,7 @@ func (server *Server) GetAllNotes(ctx *gin.Context) {
 	id, err := uuid.Parse(req.ID)
 	if err != nil {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
-		ctx.Writer.Write([]byte("id isn't parsing"))
+		fmt.Fprint(ctx.Writer, "id isn't parsing")
 		return
 	}
 	user := db.User{

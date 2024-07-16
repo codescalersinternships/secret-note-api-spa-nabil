@@ -15,7 +15,10 @@ func main() {
 	if err != nil {
 		log.Fatal("error loading .env file")
 	}
-	DB := db.Init(os.Getenv("DB_URL"))
+	DB, err := db.Init(os.Getenv("DB_URL"))
+	if err != nil {
+		log.Fatal("can't migrate correctly", err)
+	}
 	r := secretnote.NewServer(DB)
 	// Listen and Server in 0.0.0.0:8090
 	err = r.Start(os.Getenv("PORT"))
