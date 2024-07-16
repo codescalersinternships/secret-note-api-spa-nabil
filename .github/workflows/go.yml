@@ -28,12 +28,12 @@ jobs:
 
     - name: Test
       run: |
-        cd backend
+        cd ./backend
         make test
     
     - name: Run go fmt
       run: |
-        cd backend
+        cd ./backend
         make format
 
 
