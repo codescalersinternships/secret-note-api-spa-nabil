@@ -24,7 +24,7 @@ jobs:
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v3
       with:
-        args: ./path/to/backend
+        args: --deadline=5m ./path/to/backend
 
     - name: Test
       run: |
