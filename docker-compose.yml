@@ -1,6 +1,7 @@
 version: '3.4'
 services:
   postgres:
+    container_name: postgresdb
     image: postgres:14-alpine
     ports:
       - "5432:5432"
@@ -19,7 +20,7 @@ services:
     ports:
       - "8090:8090"
     env_file:
-      - .env 
+      - .env.docker
     depends_on:
       - postgres
 
