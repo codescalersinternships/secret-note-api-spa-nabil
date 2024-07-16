@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	secretnote "github.com/codescalersinternships/secret-note-api-spa-nabil/api"
-	db "github.com/codescalersinternships/secret-note-api-spa-nabil/internal/db/migrate"
+	secretnote "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/api"
+	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/migrate"
 	"github.com/joho/godotenv"
 )
 

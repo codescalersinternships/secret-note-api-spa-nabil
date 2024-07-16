@@ -1,7 +1,7 @@
 package db
 
 import (
-	dbModels "github.com/codescalersinternships/secret-note-api-spa-nabil/internal/db/models"
+	dbModels "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

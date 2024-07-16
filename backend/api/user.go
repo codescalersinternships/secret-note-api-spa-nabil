@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	db "github.com/codescalersinternships/secret-note-api-spa-nabil/internal/db/models"
+	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

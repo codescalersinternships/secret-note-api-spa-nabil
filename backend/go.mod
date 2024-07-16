@@ -1,4 +1,4 @@
-module github.com/codescalersinternships/secret-note-api-spa-nabil
+module github.com/codescalersinternships/secret-note-api-spa-nabil/backend
 
 go 1.22.4
 
