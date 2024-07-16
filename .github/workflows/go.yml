@@ -24,7 +24,7 @@ jobs:
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v3
       with:
-        args: ./backend
+        args: ./path/to/backend
 
     - name: Test
       run: |
