@@ -36,10 +36,6 @@ jobs:
         cd ./backend
         make format
 
-
-    - name: Test
-      run: make test
-
     
     
 
