@@ -58,7 +58,7 @@ func (server *Server) SignInUser(ctx *gin.Context) {
 		fmt.Fprint(ctx.Writer, "password is wrong")
 		return
 	}
-	accessToken, err := server.tokenMaker.CreateToken(arg.Email, 24*time.Hour)
+	accessToken, err := server.tokenMaker.CreateToken(arg.Email, 24*time.Second)
 	if err != nil {
 		ctx.Writer.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(ctx.Writer, "cann't make token", err)
@@ -66,8 +66,10 @@ func (server *Server) SignInUser(ctx *gin.Context) {
 	}
 	res := struct {
 		AccessToken string `json:"acces_token"`
+		ID          string `json:"id"`
 	}{
 		AccessToken: accessToken,
+		ID:          arg.ID.String(),
 	}
 
 	ctx.JSON(http.StatusOK, res)

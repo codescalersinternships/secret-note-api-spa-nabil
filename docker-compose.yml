@@ -14,14 +14,23 @@ services:
   secretnote:
     container_name: secretnote
     build:
-      context: ./
+      context: ./backend/
       dockerfile: Dockerfile
       target: secretnoteserver
     ports:
       - "8090:8090"
     env_file:
-      - .env.docker
+      - ./backend/.env.docker
     depends_on:
       - postgres
+
+  secretnotefront:
+    container_name: secretnotefront
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+
 
   

@@ -75,7 +75,7 @@ func (server *Server) GetNote(ctx *gin.Context) {
 	if note.NoteRemVisits <= 0 || note.ExpireAt.Before(time.Now()) {
 		server.store.Delete(&note)
 	}
-	fmt.Fprint(ctx.Writer, note)
+	ctx.JSON(http.StatusOK, note)
 }
 
 type getAllNoteRequest struct {
@@ -98,7 +98,5 @@ func (server *Server) GetAllNotes(ctx *gin.Context) {
 		ID: id,
 	}
 	notes := user.FindAllUserNotes(server.store)
-	for _, note := range notes {
-		fmt.Fprint(ctx.Writer, note)
-	}
+	ctx.JSON(http.StatusOK, notes)
 }

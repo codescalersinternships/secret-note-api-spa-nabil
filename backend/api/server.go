@@ -17,6 +17,21 @@ type Server struct {
 	router     *gin.Engine
 }
 
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
 func NewServer(store *gorm.DB) *Server {
 	tokenMaker := NewJWTMaker(RandString(32))
 	r := gin.Default()
@@ -25,6 +40,7 @@ func NewServer(store *gorm.DB) *Server {
 		tokenMaker: tokenMaker,
 	}
 	server.router = r
+	server.router.Use(CORSMiddleware())
 	server.router.HandleMethodNotAllowed = true
 	server.router.POST("/signin", server.SignInUser)
 	server.router.POST("/signup", server.SignUpUser)
