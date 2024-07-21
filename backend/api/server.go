@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"golang.org/x/time/rate"
 )
 
 
@@ -47,11 +48,11 @@ func NewServer(store db.Store) *Server {
 	server.router.GET("/swagger/*any",ginSwagger.WrapHandler(swaggerFiles.Handler))
 	server.router.Use(CORSMiddleware())
 	server.router.HandleMethodNotAllowed = true
-	server.router.POST("/signin", server.SignInUser)
-	server.router.POST("/signup", server.SignUpUser)
-	server.router.GET("/note/:id", server.GetNote)
-	server.router.GET("/:userid", server.GetAllNotes)
-	server.router.POST("/create", server.CreateNote).Use(ProtectedHandler(server.tokenMaker))
+	server.router.POST("/signin", RateLimiter(server.SignInUser, rateLimit, burst))
+	server.router.POST("/signup", RateLimiter(server.SignUpUser, rateLimit, burst))
+	server.router.GET("/note/:id", RateLimiter(server.GetNote, rateLimit, burst))
+	server.router.GET("/:userid", RateLimiter(server.GetAllNotes, rateLimit, burst))
+	server.router.POST("/create", RateLimiter(server.CreateNote, rateLimit, burst)).Use(ProtectedHandler(server.tokenMaker))
 	return server
 }
 
@@ -103,4 +104,19 @@ func ProtectedHandler(token JWTMaker) gin.HandlerFunc {
 		ctx.Next()
 	}
 
+}
+const (
+	rateLimit = 1
+	burst     = 1
+)
+
+func RateLimiter(next func(c *gin.Context), r rate.Limit, b int) gin.HandlerFunc {
+	limiter := rate.NewLimiter(r, b)
+	return func(c *gin.Context) {
+		if !limiter.Allow() {
+			c.JSON(http.StatusTooManyRequests, gin.H{"error": "too many requests"})
+			c.Abort()
+		}
+		next(c)
+	}
 }
