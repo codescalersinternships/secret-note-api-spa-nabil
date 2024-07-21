@@ -1,14 +1,12 @@
 package secretnote
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type signUpUserRequest struct {
@@ -17,7 +15,7 @@ type signUpUserRequest struct {
 	Password_Hashed string `json:"password" binding:"required"`
 }
 
-func (server *Server) SignUpUser(ctx *gin.Context) {
+func (server Server) SignUpUser(ctx *gin.Context) {
 	var req signUpUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
@@ -33,7 +31,11 @@ func (server *Server) SignUpUser(ctx *gin.Context) {
 		Email:    req.Email,
 		Password: hashedPass,
 	}
-	user.CreateUser(server.store)
+	err = user.CreateUser(server.store)
+	if err != nil {
+		fmt.Fprint(ctx.Writer, "cann't create user", err)
+		return
+	}
 	fmt.Fprint(ctx.Writer, user)
 }
 
@@ -49,12 +51,14 @@ func (server *Server) SignInUser(ctx *gin.Context) {
 		return
 	}
 	arg := db.User{}
-	result := arg.FindByEmail(req.Email, server.store)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		fmt.Fprint(ctx.Writer, "email doesn't exist")
+	err := arg.FindByEmail(req.Email, server.store)
+	if err != nil {
+		ctx.Writer.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(ctx.Writer, "email doesn't exist", err)
 		return
 	}
 	if CheckPassword(req.Password_Hashed, arg.Password) != nil {
+		ctx.Writer.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(ctx.Writer, "password is wrong")
 		return
 	}

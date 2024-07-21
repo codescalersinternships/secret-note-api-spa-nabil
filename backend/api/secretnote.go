@@ -1,7 +1,6 @@
 package secretnote
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,7 +8,6 @@ import (
 	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type createNoteRequest struct {
@@ -44,7 +42,11 @@ func (server *Server) CreateNote(ctx *gin.Context) {
 		ExpireAt:      expireTime,
 		UserID:        id,
 	}
-	note.CreateNote(server.store)
+	err = note.CreateNote(server.store)
+	if err != nil {
+		fmt.Fprint(ctx.Writer, "can't create note")
+		return
+	}
 	fmt.Fprint(ctx.Writer, note)
 }
 
@@ -65,15 +67,19 @@ func (server *Server) GetNote(ctx *gin.Context) {
 		fmt.Fprint(ctx.Writer, "date isn't parsing")
 		return
 	}
-	result := note.FindByID(id, server.store)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	err = note.FindByID(id, server.store)
+	if err != nil {
 		fmt.Fprint(ctx.Writer, "note is expired or doesn't exist")
 		return
 	}
 	note.NoteRemVisits -= 1
 	note.Update(server.store)
 	if note.NoteRemVisits <= 0 || note.ExpireAt.Before(time.Now()) {
-		server.store.Delete(&note)
+		err = note.Delete(server.store)
+		if err != nil {
+			fmt.Fprint(ctx.Writer, "Can't delete note")
+			return
+		}
 	}
 	ctx.JSON(http.StatusOK, note)
 }
@@ -97,6 +103,10 @@ func (server *Server) GetAllNotes(ctx *gin.Context) {
 	user := db.User{
 		ID: id,
 	}
-	notes := user.FindAllUserNotes(server.store)
+	notes,err := user.FindAllUserNotes(server.store)
+	if err != nil {
+		fmt.Fprint(ctx.Writer, "can't get user notes")
+		return
+	}
 	ctx.JSON(http.StatusOK, notes)
 }

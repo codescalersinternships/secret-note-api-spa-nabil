@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"strings"
 
+	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
+
 type Server struct {
-	store      *gorm.DB
+	store      db.Store
 	tokenMaker JWTMaker
 	router     *gin.Engine
 }
@@ -32,7 +33,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
-func NewServer(store *gorm.DB) *Server {
+func NewServer(store db.Store) *Server {
 	tokenMaker := NewJWTMaker(RandString(32))
 	r := gin.Default()
 	server := &Server{

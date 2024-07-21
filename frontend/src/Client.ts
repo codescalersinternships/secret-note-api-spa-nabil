@@ -77,6 +77,9 @@ api.interceptors.request.use((config) => {
 });
 
 export const getUserNotes = async (): Promise<Note[]> => {
+  if (getUserID === null) {
+    return [];
+  }
   try {
     const response = await api.get<Note[]>(`/${getUserID}`);
     return response.data;

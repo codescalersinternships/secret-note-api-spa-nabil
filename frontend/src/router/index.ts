@@ -4,7 +4,6 @@ import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
 import CreateNote from "../views/CreateNote.vue";
 import ViewNote from "../views/ViewNote.vue";
-// import UserNotes from '../views/UserNotes.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", name: "Home", component: Home },
@@ -12,7 +11,6 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/signup", name: "SignUp", component: SignUp },
   { path: "/create", name: "CreateNote", component: CreateNote },
   { path: "/note/:id", name: "ViewNote", component: ViewNote, props: true },
-  // { path: '/:userid', name: 'UserNotes', component: UserNotes, props: true },
 ];
 
 const router = createRouter({
