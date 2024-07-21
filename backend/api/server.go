@@ -106,8 +106,8 @@ func ProtectedHandler(token JWTMaker) gin.HandlerFunc {
 
 }
 const (
-	rateLimit = 1
-	burst     = 1
+	rateLimit = 10
+	burst     = 10
 )
 
 func RateLimiter(next func(c *gin.Context), r rate.Limit, b int) gin.HandlerFunc {
