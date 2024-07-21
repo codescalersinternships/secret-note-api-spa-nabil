@@ -10,6 +10,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type ErrorResponse struct {
+    Message string `json:"message"`
+}
+
+
 type createNoteRequest struct {
 	UserID     string `json:"userid" binding:"required"`
 	Text       string `json:"text" binding:"required"`
@@ -17,6 +22,14 @@ type createNoteRequest struct {
 	ExpireDate string `json:"expiredat" binding:"required"`
 }
 
+// @Summary Create a new note
+// @Description Create a new note with unique URL
+// @Accept json
+// @Produce json
+// @Param body body createNoteRequest true "Note data"
+// @Success 200 {object} db.Note
+// @Failure 400 {object} ErrorResponse
+// @Router /create [post]
 func (server *Server) CreateNote(ctx *gin.Context) {
 	var req createNoteRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -53,7 +66,14 @@ func (server *Server) CreateNote(ctx *gin.Context) {
 type getNoteRequest struct {
 	ID string `uri:"id" binding:"required"`
 }
-
+// @Summary Retrieve a specific note
+// @Description Get a note by its ID Using the link parsing
+// @Accept json
+// @Produce json
+// @Param id path string true "Note ID"
+// @Success 200 {object} db.Note
+// @Failure 400 {object} ErrorResponse
+// @Router /note/{id} [get]
 func (server *Server) GetNote(ctx *gin.Context) {
 	var req getNoteRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -88,6 +108,14 @@ type getAllNoteRequest struct {
 	ID string `uri:"userid" binding:"required"`
 }
 
+// @Summary Retrieve all notes for a user
+// @Description Get all notes for the specified user
+// @Accept json
+// @Produce json
+// @Param userid path string true "User ID"
+// @Success 200 {array} db.Note
+// @Failure 400 {object} ErrorResponse
+// @Router /notes/{userid} [get]
 func (server *Server) GetAllNotes(ctx *gin.Context) {
 	var req getAllNoteRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {

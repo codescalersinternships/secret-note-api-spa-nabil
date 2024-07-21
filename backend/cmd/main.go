@@ -6,10 +6,16 @@ import (
 	"os"
 
 	secretnote "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/api"
+	_ "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/docs"
 	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/migrate"
 	"github.com/joho/godotenv"
 )
 
+// @title Secret Note API
+// @version 1.0
+// @description This is a simple API for sharing secret notes.
+// @host localhost:8090
+// @BasePath /
 func main() {
 	err := godotenv.Load()
 	if err != nil {

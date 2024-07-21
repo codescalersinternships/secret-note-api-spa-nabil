@@ -6,9 +6,12 @@ import (
 	"net/http"
 	"strings"
 
+	_ "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/docs"
 	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 
@@ -41,6 +44,7 @@ func NewServer(store db.Store) *Server {
 		tokenMaker: tokenMaker,
 	}
 	server.router = r
+	server.router.GET("/swagger/*any",ginSwagger.WrapHandler(swaggerFiles.Handler))
 	server.router.Use(CORSMiddleware())
 	server.router.HandleMethodNotAllowed = true
 	server.router.POST("/signin", server.SignInUser)
