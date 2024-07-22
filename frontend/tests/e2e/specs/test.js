@@ -2,8 +2,6 @@
 
 describe("End-to-End Test for Secret Note Application", () => {
   it("should sign up, sign in, create a note, and verify the note", () => {
-    const uuid = () => Cypress._.random(0, 1e6);
-    const id = uuid();
     const email = "test@gmail.com";
 
     // Sign Up
