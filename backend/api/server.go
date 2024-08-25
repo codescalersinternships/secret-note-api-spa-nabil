@@ -53,6 +53,7 @@ func NewServer(store db.Store) *Server {
 	server.router.GET("/note/:id", RateLimiter(server.GetNote, rateLimit, burst))
 	server.router.GET("/:userid", RateLimiter(server.GetAllNotes, rateLimit, burst))
 	server.router.POST("/create", RateLimiter(server.CreateNote, rateLimit, burst)).Use(ProtectedHandler(server.tokenMaker))
+	fmt.Println("\nNew server is delievered")
 	return server
 }
 
@@ -61,7 +62,7 @@ func (server *Server) Start(address string) error {
 	if err != nil {
 		return err
 	}
-	return endless.ListenAndServe(":8090", server.router)
+	return endless.ListenAndServe(address, server.router)
 }
 func ProtectedHandler(token JWTMaker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
