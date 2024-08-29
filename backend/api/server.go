@@ -8,7 +8,6 @@ import (
 
 	_ "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/docs"
 	db "github.com/codescalersinternships/secret-note-api-spa-nabil/backend/internal/db/models"
-	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -62,7 +61,7 @@ func (server *Server) Start(address string) error {
 	if err != nil {
 		return err
 	}
-	return endless.ListenAndServe(address, server.router)
+	return err
 }
 func ProtectedHandler(token JWTMaker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
