@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+
+
+  backend:
+    build: ./backend 
+    image: backend:latest
+    ports:
+      - "8090:8090"
+    env_file:
+      - ./backend/.env.docker
+    environment:
+      - DB_URL=postgresql://postgres:mysecretpassword@postgres:5432/postgres?sslmode=disable
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 30s
+
+
+  frontend:
+    build: ./frontend
+    image: frontend:latest
+    ports:
+      - "8080:8080"
+    deploy:
+      restart_policy:
+        condition: on-failure

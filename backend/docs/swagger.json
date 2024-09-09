@@ -1,0 +1,337 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a simple API for sharing secret notes.",
+        "title": "Secret Note API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8090",
+    "basePath": "/",
+    "paths": {
+        "/create": {
+            "post": {
+                "description": "Create a new note with unique URL",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new note",
+                "parameters": [
+                    {
+                        "description": "Note data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.createNoteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.Note"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/note/{id}": {
+            "get": {
+                "description": "Get a note by its ID Using the link parsing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieve a specific note",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Note ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.Note"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notes/{userid}": {
+            "get": {
+                "description": "Get all notes for the specified user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieve all notes for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/db.Note"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/signin": {
+            "post": {
+                "description": "Authenticate a user with email and password to receive an access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Sign in a user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.signInUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.SignInResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Create a new user with the provided name, email, and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Sign up a new user",
+                "parameters": [
+                    {
+                        "description": "User data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.signUpUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/db.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/secretnote.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "db.Note": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "description": "Automatically managed by GORM for creation time",
+                    "type": "string"
+                },
+                "expiredat": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "noteremvisits": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/db.User"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
+        "db.User": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "description": "Automatically managed by GORM for creation time",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "A pointer to a string, allowing for null values",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Standard field for the primary key",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "A regular string field that can't be null",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "A regular string field that can't be null",
+                    "type": "string"
+                },
+                "updatedat": {
+                    "description": "Automatically managed by GORM for update time",
+                    "type": "string"
+                }
+            }
+        },
+        "secretnote.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "secretnote.SignInResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "secretnote.createNoteRequest": {
+            "type": "object",
+            "required": [
+                "expiredat",
+                "noteremvisits",
+                "text",
+                "userid"
+            ],
+            "properties": {
+                "expiredat": {
+                    "type": "string"
+                },
+                "noteremvisits": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "string"
+                }
+            }
+        },
+        "secretnote.signInUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "secretnote.signUpUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

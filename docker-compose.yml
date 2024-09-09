@@ -1,0 +1,33 @@
+version: '3.4'
+services:
+  postgres:
+    container_name: postgresdb
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+  secretnote:
+    container_name: secretnote
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+      target: secretnoteserver
+    ports:
+      - "8090:8090"
+    env_file:
+      - ./backend/.env.docker
+    depends_on:
+      - postgres
+
+  secretnotefront:
+    container_name: secretnotefront
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
